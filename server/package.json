@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
+    "graphql": "^14.6.0",
+    "pg": "^7.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
+  "scripts": {
+    "start": "nodemon server.js",
+    "start:docker": "docker container run --name postgres -e POSTGRES_USER=healthdb -e POSTGRES_PASSWORD=secret -d -p 4000:5432 -v $(pwd)/my-postgres:/etc/postgresql/ postgres",
+    "initDB": "node scripts/initDB.js"
+  }
+}
