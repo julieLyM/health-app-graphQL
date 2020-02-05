@@ -1,35 +1,77 @@
 import React, { Component } from 'react';
 import { graphql } from 'react-apollo';
-import { userQuery } from '../services/queries';
+import { flowRight as compose } from 'lodash';
+import { usersQuery, addUserMutation } from '../services/queries';
+import DescriptionHealth from './DescriptionHealth';
 
 class Users extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      name: '',
+      age: '',
+      height: '',
+    };
+  }
+
+  updateQueries = (field, { target: { value } }) => {
+    this.setState({
+      [field]: ['age'].includes(field) ? Number(value) : value,
+    });
+  };
+
+  onSubmitCreateUser = e => {
+    e.preventDefault();
+    this.props.addUser({
+      variables: this.state,
+      refetchQueries: [{ query: usersQuery }],
+    });
+  };
+
   render() {
-    console.log(this.props);
-    const { data } = this.props;
+    const { users } = this.props;
     return (
       <div>
         <h1>User List</h1>
-        {!data.loading &&
-          data.users.map((user, i) => (
+        {!users.loading &&
+          users.users.map((user, i) => (
             <div key={i}>
               {user.name} {user.age} {user.height}
             </div>
           ))}
-        <h1>Create a user</h1>
+
+        <h1>add a user</h1>
         <form>
-          <input type="text" placeholder="name" />
-          <input type="text" placeholder="age" />
-          <input type="text" placeholder="height" />
-          <input type="text" placeholder="weight" />
-          <input type="text" placeholder="blood_pressure" />
-          <input type="text" placeholder="water" />
-          <input type="text" placeholder="alcool" />
-          <input type="text" placeholder="sport" />
+          <div>
+            <input
+              type="text"
+              placeholder="name"
+              value={this.state.name}
+              onChange={this.updateQueries.bind(null, 'name')}
+            />
+            <input
+              type="text"
+              placeholder="age"
+              value={this.state.age}
+              onChange={this.updateQueries.bind(null, 'age')}
+            />
+            <input
+              type="text"
+              placeholder="height"
+              value={this.state.height}
+              onChange={this.updateQueries.bind(null, 'height')}
+            />
+            <button onClick={this.onSubmitCreateUser}>add</button>
+          </div>
         </form>
-        <button>add</button>
+        <DescriptionHealth />
       </div>
     );
   }
 }
 
-export default graphql(userQuery)(Users);
+export default compose(
+  graphql(usersQuery, { name: 'users' }),
+  graphql(addUserMutation, { name: 'addUser' })
+)(Users);

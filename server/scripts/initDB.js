@@ -81,27 +81,31 @@ const insertUsers = async client => {
 const insertWeight = async client => {
   const weight = [
     {
-      weight: 60,
+      weight: 69,
+      date: '03/02/2020 12:00',
       user_id: 11,
     },
     {
-      weight: 60,
+      weight: 55,
+      date: '03/02/2020 12:00',
       user_id: 22,
     },
     {
       weight: 60,
+      date: '03/02/2020 12:00',
       user_id: 33,
     },
     {
       weight: 70,
+      date: '03/02/2020 12:00',
       user_id: 44,
     },
   ];
   try {
     await Promise.all(
-      weight.map(({ weight, user_id }) =>
+      weight.map(({ weight, date, user_id }) =>
         client.query(
-          `INSERT INTO weight (weight,user_id ) VALUES (${weight}, ${user_id})`
+          `INSERT INTO weight (weight,date,user_id ) VALUES (${weight},'${date}', ${user_id})`
         )
       )
     );
