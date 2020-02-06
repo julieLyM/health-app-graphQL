@@ -6,7 +6,8 @@ import { flowRight as compose } from 'lodash';
 import {
   weightQuery,
   addWeightMutation,
-  // bloodPressureQuery,
+  bloodPressureQuery,
+  addBloodMutation,
   // GlassWaterQuery,
   // GlassAlcoolQuery,
   // sportQuery,
@@ -18,23 +19,34 @@ class DescriptionHealth extends Component {
 
     this.state = {
       weight: '',
-      date: '',
-      user_id: 22,
+      date: '2020/02/03',
+      user_id: 1,
+      blood: '',
     };
   }
 
   updateMyForm = (field, { target: { value } }) => {
     this.setState({
-      [field]: ['weight', 'user_id'].includes(field) ? Number(value) : value,
+      [field]: ['weight', 'blood', 'user_id'].includes(field)
+        ? Number(value)
+        : value,
     });
   };
 
   addWeightSubmit = e => {
     e.preventDefault();
-    console.log(this.state);
     this.props.addWeight({
       variables: this.state,
       refetchQueries: [{ query: weightQuery }],
+    });
+  };
+
+  addBloodSubmit = e => {
+    e.preventDefault();
+    console.log(this.state);
+    this.props.addBlood({
+      variables: this.state,
+      refetchQueries: [{ query: bloodPressureQuery }],
     });
   };
 
@@ -49,6 +61,7 @@ class DescriptionHealth extends Component {
               {moment(element.date, 'x').format('DD-MM-YYYY')}
             </div>
           ))}
+        <h2>Weight :</h2>
         <form>
           <input
             type="text"
@@ -58,18 +71,38 @@ class DescriptionHealth extends Component {
           />
           <button onClick={this.addWeightSubmit}>add weight</button>
         </form>
+
+        <h2>Blood Pressure :</h2>
         <form>
-          <input type="text" placeholder="blood_pressure" />
-          <button>add blood pressure</button>
+          {!this.props.blood.loading &&
+            this.props.blood.blood_pressure.map((bloods, i) => (
+              <div key={i}>
+                Blood Pressure: {bloods.blood_pressure} - Date:{' '}
+                {moment(bloods.date, 'x').format('DD-MM-YYYY')}
+              </div>
+            ))}
+          <input
+            type="text"
+            placeholder="blood_pressure"
+            value={this.state.blood}
+            onChange={this.updateMyForm.bind(null, 'blood')}
+          />
+          <button onClick={this.addBloodSubmit}>add blood pressure</button>
         </form>
+
+        <h2>Glass of water :</h2>
         <form>
           <input type="text" placeholder="water" />
           <button>add glass of water</button>
         </form>
+
+        <h2>Glass of alcool :</h2>
         <form>
           <input type="text" placeholder="alcool" />
           <button>add glass of alcool</button>
         </form>
+
+        <h2>Sport :</h2>
         <form>
           <input type="text" placeholder="sport" />
           <button>add sport</button>
@@ -81,5 +114,7 @@ class DescriptionHealth extends Component {
 
 export default compose(
   graphql(weightQuery, { name: 'weight' }),
-  graphql(addWeightMutation, { name: 'addWeight' })
+  graphql(addWeightMutation, { name: 'addWeight' }),
+  graphql(bloodPressureQuery, { name: 'blood' }),
+  graphql(addBloodMutation, { name: 'addBlood' })
 )(DescriptionHealth);

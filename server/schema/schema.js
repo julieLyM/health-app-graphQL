@@ -139,7 +139,9 @@ const Mutation = new GraphQLObjectType({
         user_id: { type: GraphQLInt },
       },
       resolve: async (parent, { blood_pressure, date, user_id }) => {
+        console.log('hello blood');
         const bloodP = await addBlood({ blood_pressure, date, user_id });
+        console.log(bloodP);
         return bloodP;
       },
     },
@@ -175,12 +177,15 @@ const Mutation = new GraphQLObjectType({
         date: { type: GraphQLString },
         user_id: { type: GraphQLInt },
       },
-      resolve: async (parent, { workout_name, number_of_workout, user_id, date }) => {
+      resolve: async (
+        parent,
+        { workout_name, number_of_workout, user_id, date }
+      ) => {
         const sports = await addSport({
           workout_name,
           number_of_workout,
           user_id,
-          date
+          date,
         });
         return sports;
       },

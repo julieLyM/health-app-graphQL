@@ -41,7 +41,7 @@ class Users extends Component {
             </div>
           ))}
 
-        <h1>add a user</h1>
+        <h2>add a user</h2>
         <form>
           <div>
             <input
